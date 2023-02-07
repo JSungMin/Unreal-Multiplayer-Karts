@@ -46,6 +46,7 @@ public:
 	UKartMovementReplicationComponent();
 
 protected:
+	void SendMove();
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
@@ -89,4 +90,7 @@ private:
 	FTransform ClientStartTransform;
 	FVector ClientStartVelocity;
 	float ClientSimulatedTime;
+
+	UPROPERTY()
+	FTimerHandle SendMoveTimerHandle; 
 };

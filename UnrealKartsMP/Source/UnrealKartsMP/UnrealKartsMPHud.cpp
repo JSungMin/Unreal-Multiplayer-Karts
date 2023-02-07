@@ -12,6 +12,8 @@
 #include "UObject/ConstructorHelpers.h"
 #include "Engine/Engine.h"
 
+#include "Kismet/KismetSystemLibrary.h"
+
 #define LOCTEXT_NAMESPACE "VehicleHUD"
 
 #ifndef HMD_MODULE_INCLUDED
@@ -20,8 +22,16 @@
 
 AUnrealKartsMPHud::AUnrealKartsMPHud()
 {
-	static ConstructorHelpers::FObjectFinder<UFont> Font(TEXT("/Engine/EngineFonts/RobotoDistanceField"));
-	HUDFont = Font.Object;
+}
+
+void AUnrealKartsMPHud::BeginPlay()
+{
+	if (UKismetSystemLibrary::IsDedicatedServer(GetWorld()) == false)
+	{
+		static ConstructorHelpers::FObjectFinder<UFont> Font(TEXT("/Engine/EngineFonts/RobotoDistanceField"));
+		HUDFont = Font.Object;
+	}
+	Super::BeginPlay();
 }
 
 void AUnrealKartsMPHud::DrawHUD()

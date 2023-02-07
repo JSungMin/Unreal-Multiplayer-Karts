@@ -15,6 +15,13 @@ UKartMovementReplicationComponent::UKartMovementReplicationComponent()
 	SetIsReplicatedByDefault(true);
 }
 
+void UKartMovementReplicationComponent::SendMove()
+{
+	const FKartMove LastMove = MovementComponent->GetLastMove();
+	UnacknowledgedMoveQueue.Add(LastMove);
+	Server_SendMove(LastMove);
+}
+
 
 // Called when the game starts
 void UKartMovementReplicationComponent::BeginPlay()
@@ -22,7 +29,10 @@ void UKartMovementReplicationComponent::BeginPlay()
 	Super::BeginPlay();
 
 	MovementComponent = GetOwner()->FindComponentByClass<UKartMovementComponent>();
-	
+	if (GetOwnerRole() == ROLE_AutonomousProxy)
+	{
+		GetWorld()->GetTimerManager().SetTimer(SendMoveTimerHandle, this, &UKartMovementReplicationComponent::SendMove, 0.1f, true);
+	}
 }
 
 
@@ -35,12 +45,6 @@ void UKartMovementReplicationComponent::TickComponent(float DeltaTime, ELevelTic
 		return;
 
 	FKartMove LastMove = MovementComponent->GetLastMove();
-
-	if (GetOwnerRole() == ROLE_AutonomousProxy)
-	{
-		UnacknowledgedMoveQueue.Add(LastMove);
-		Server_SendMove(LastMove);
-	}
 
 	if (GetOwner()->GetRemoteRole() == ROLE_SimulatedProxy)
 		UpdateServerState(LastMove);

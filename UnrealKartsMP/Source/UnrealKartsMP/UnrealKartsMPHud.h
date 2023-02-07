@@ -12,6 +12,8 @@ class AUnrealKartsMPHud : public AHUD
 public:
 	AUnrealKartsMPHud();
 
+	virtual void BeginPlay() override;
+	
 	/** Font used to render the vehicle info */
 	UPROPERTY()
 	UFont* HUDFont;
