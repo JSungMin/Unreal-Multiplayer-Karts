@@ -14,7 +14,6 @@ AKart::AKart()
 	PrimaryActorTick.bCanEverTick = true;
 
 	bReplicates = true;
-	bReplicateMovement = false;
 
 	MovementComponent = CreateDefaultSubobject<UKartMovementComponent>(TEXT("MovementComponent"));
 	MovementReplicationComponent = CreateDefaultSubobject<UKartMovementReplicationComponent>(TEXT("MovementReplicationComponent"));
@@ -24,7 +23,7 @@ AKart::AKart()
 void AKart::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	SetReplicateMovement(false);	
 	if (HasAuthority())
 		NetUpdateFrequency = 1;
 }
@@ -33,8 +32,8 @@ void AKart::BeginPlay()
 void AKart::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-	DrawDebugString(GetWorld(), FVector(0, 0, 150), GetEnumText(Role), this, FColor::Blue, DeltaTime);
+	
+	DrawDebugString(GetWorld(), FVector(0, 0, 150), GetEnumText(GetLocalRole()), this, FColor::Blue, DeltaTime);
 }
 
 void AKart::MoveForward(float Value)
